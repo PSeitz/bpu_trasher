@@ -1,9 +1,27 @@
 // Imports `trash_bpu`
-include!(concat!(env!("OUT_DIR"), "/generated_code.rs"));
+mod generated_code;
+use generated_code::*;
 
-/// Trashes the BPU
+/// Trashes the branch predictor with 256 iterations
+/// See [trash_bpu_with_iterations] for more information
 pub fn trash_bpu() {
-    for _ in 0..256 {
+    trash_bpu_with_iterations(256);
+}
+
+/// Trashes the the branch predictor
+///
+/// It evaluates 8k branches * num_iterations * 4
+///
+/// Some BPU have 2-level adaptive predictors, so we need to apply different patterns to trash it.
+///
+/// ## TODO
+/// The current patterns are not sufficent on some architectures. We need to have local and global patterns.
+/// Local patterns are patterns that are applied to a single branch, while global patterns are
+/// applied to all branches.
+///
+/// Currently there are only global patterns applied.
+pub fn trash_bpu_with_iterations(num_iterations: u32) {
+    for _ in 0..num_iterations {
         eval_branches(&mut || rand::random::<u32>());
     }
     let mut alternate = || {
@@ -13,15 +31,15 @@ pub fn trash_bpu() {
             COUNTER
         }
     };
-    for _ in 0..256 {
+    for _ in 0..num_iterations {
         eval_branches(&mut alternate);
     }
     // Allways false
-    for _ in 0..256 {
+    for _ in 0..num_iterations {
         eval_branches(&mut || 0);
     }
     // Allways true
-    for _ in 0..256 {
+    for _ in 0..num_iterations {
         eval_branches(&mut || 1);
     }
 }

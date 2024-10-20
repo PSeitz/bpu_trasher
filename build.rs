@@ -1,16 +1,34 @@
-use std::env;
+use std::fs;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
+use std::time::SystemTime;
 
 fn main() {
-    let n = 8096; // Number of branches
-    let group_size = 1024; // Number of branches per function
+    // Number of branches
+    let n = 8096;
+    // Group branches in blocks to avoid hitting rust compiler limits
+    let group_size = 1024;
 
-    // Get the output directory
-    let out_dir = env::var("OUT_DIR").unwrap();
-    let dest_path = Path::new(&out_dir).join("generated_code.rs");
-    let mut file = File::create(&dest_path).unwrap();
+    let generated_file = "src/generated_code.rs"; // Generated code in the source directory
+    let build_script = "build.rs"; // Use the build.rs itself as the trigger
+
+    // Check if the generated file exists
+    if Path::new(generated_file).exists() {
+        let generated_time = fs::metadata(generated_file)
+            .and_then(|metadata| metadata.modified())
+            .unwrap_or(SystemTime::UNIX_EPOCH);
+        let trigger_time = fs::metadata(build_script)
+            .and_then(|metadata| metadata.modified())
+            .unwrap_or(SystemTime::UNIX_EPOCH);
+
+        // Only regenerate if the trigger file is newer than the generated file
+        if trigger_time <= generated_time {
+            println!("Generated code is up-to-date.");
+            return;
+        }
+    }
+    let mut file = File::create(generated_file).unwrap();
 
     // Add necessary imports at the top of the generated file
     writeln!(file, "use std::arch::asm;").unwrap();
@@ -69,4 +87,7 @@ fn main() {
         writeln!(file, "    eval_branches_{}(random);", i).unwrap();
     }
     writeln!(file, "}}").unwrap();
+
+    // Tell Cargo to re-run if build.rs changes
+    println!("cargo:rerun-if-changed={}", build_script);
 }

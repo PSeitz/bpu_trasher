@@ -1,24 +1,13 @@
 
-
 # BPU Trasher
 
 BPU (Branch Predictor Unit) Trasher tries to trash the BPU of a processor by trying different strategies for the different components of the BPU.
 
 This tool is useful to avoid overtraining the branch predictor unit of a processor an getting skewed results in benchmarks.
 
-
 # BPU Concepts
 
-## 2-Level Adaptive Predictor
-
-The 2-level adaptive predictor is a common branch predictor used in modern processors.
-
-The 2-level adaptive predictor consists of two tables:
-1. The Branch History Table (BHT)
-2. The Pattern History Table (PHT)
-
-The BHT is a table that stores the history of the last N branches. The PHT is a table that stores the prediction of the last N branches.
-The BHT is used to index the PHT. The PHT is used to predict the outcome of the branch.
+The exact components of the BPU can vary from processor to processor and are not public information.
 
 ## Types of Branches
 Although intuitively, we think of branches as conditional (e.g. `if`), for the CPU anything that changes the flow of the program is a branch.
@@ -41,6 +30,21 @@ Instructions: `CALL`
 This is an unconditional branch. It's its own type, since the BPU has a special handling for it.
 Instructions: `RET`
 
+## 2-Level Adaptive Predictor
+
+The 2-level adaptive predictor is a common branch predictor used in modern processors.
+
+The 2-level adaptive predictor consists of two tables:
+1. The Branch History Table (BHT)
+2. The Pattern History Table (PHT)
+
+The BHT is a table that stores the history of the last N branches. The PHT is a table that stores the prediction of the last N branches.
+The BHT is used to index the PHT. The PHT is used to predict the outcome of the branch.
+
+### Branch target buffer (BTB)
+The BTB is a cache that stores the target address of the most the frequently used conditional and unconditional branches.
+
+Depending on the CPU, there may be different branch target buffers for different types of branches. For example, there may be a separate BTB for indirect branches.
 
 ## Loop/Switch Counter
 The loop counter is a special case of a branch predictor that is used to predict the number of iterations of a loop.
@@ -80,22 +84,6 @@ literature.
 
 A perceptron is a type of neural network that is used in the BPU to predict the outcome of a branch.
 It is used in Zen 4 processors.
-
-# BPU Components
-
-The exact components of the BPU can vary from processor to processor and are not public information.
-However, the typical components of a BPU are:
-
-### Branch target buffer (BTB)
-The BTB is a cache that stores the target address of the most the frequently used conditional and unconditional branches.
-
-Depending on the CPU, there may be different branch target buffers for different types of branches. For example, there may be a separate BTB for indirect branches.
-
-
-### Branch history table (BHT)
-
-
-### Pattern history table (PHT)
 
 
 ### Return address stack (RAS)
