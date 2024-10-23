@@ -4,6 +4,7 @@ use generated_code::*;
 
 /// Trashes the branch predictor with 256 iterations
 /// See [trash_bpu_with_iterations] for more information
+#[inline(never)]
 pub fn trash_bpu() {
     trash_bpu_with_iterations(256);
 }
@@ -20,6 +21,7 @@ pub fn trash_bpu() {
 /// applied to all branches.
 ///
 /// Currently there are only global patterns applied.
+#[inline(never)]
 pub fn trash_bpu_with_iterations(num_iterations: u32) {
     for _ in 0..num_iterations {
         eval_branches(&mut || rand::random::<u32>());

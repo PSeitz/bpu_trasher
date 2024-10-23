@@ -78,6 +78,7 @@ fn main() {
     }
 
     // Main function to dispatch across the smaller functions
+    writeln!(file, "#[inline(never)]").unwrap();
     writeln!(
         file,
         "pub fn eval_branches(random: &mut dyn FnMut() -> u32) {{"

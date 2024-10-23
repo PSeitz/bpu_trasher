@@ -56701,6 +56701,7 @@ pub fn eval_branches_7(random: &mut dyn FnMut() -> u32) {
         asm!("nop");
     }
 }
+#[inline(never)]
 pub fn eval_branches(random: &mut dyn FnMut() -> u32) {
     eval_branches_0(random);
     eval_branches_1(random);
