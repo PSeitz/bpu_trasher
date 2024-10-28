@@ -5,6 +5,11 @@ BPU (Branch Predictor Unit) Trasher tries to trash the BPU of a processor by try
 
 This tool is useful to avoid overtraining the branch predictor unit of a processor an getting skewed results in benchmarks.
 
+### Disclaimer
+The status of the project is still experimental. 
+The current approach is working on a high level, but the exact implementation of the BPU is not known and may vary from processor to processor.
+What's missing currently is a benchmark to evaluate it's effectiveness on different CPUs.
+
 # BPU Concepts
 
 The exact components of the BPU can vary from processor to processor and are not public information.
